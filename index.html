@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport"    content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Canvas Tree">
+	<meta name="author"      content="Trevor Holmes (pgesoftware.com">
+	
+	<title>Tree</title>
+
+</head>
+<body onload="onTreeLoad()">
+    <h1 class="title">HTML5 Tree (IE10+)</h1>
+    <div id="treeBox">
+
+        <canvas id="tree" width="200" height="100"></canvas>
+    </div>
+    <img src="icon_folder.png" id="folder"/>
+    <script>
+        function onTreeLoad() {
+            var canvas = document.getElementById("tree");
+            console.log(document.getElementById("tree"));
+            var ctx = canvas.getContext("2d");
+    /*
+            ctx.fillStyle = "#FF0000";
+            ctx.fillRect(0, 0, 150, 75);
+            ctx.moveTo(0, 0);
+            ctx.lineTo(200, 100);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(95, 50, 40, 0, 2 * Math.PI);
+            ctx.stroke();
+            ctx.font = "30px Arial";
+            ctx.fillText("Hello World", 10, 50);
+            ctx.strokeText("Hello World", 10, 50);
+            */
+            var img = document.getElementById("folder");
+            ctx.drawImage(img, 100, 10);
+        }
+    </script>
+
+</body>
+</html>
