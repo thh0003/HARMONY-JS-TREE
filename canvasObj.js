@@ -1,48 +1,40 @@
-class canvasObj {
-    /**
-     * 
-     * "CODEID":"8456",
-       "CODEParentID":null,
-       "CODEVal":"8456",
-       "CODETxt":"(Root)",
-       "CODEIcon":"folder"
-     */
-    constructor(nodeObj, locationObj){
-      
-      this.CODEID = nodeObj.CODEID;
-      this.CODEParentID = nodeObj.CODEParentID;
-      this.CODEVal = nodeObj.CODEVal;
-      this.CODETxt = nodeObj.CODETxt;
-      this.CODEIcon = nodeOBj.CODEIcon;
-      this.treeEdges = [new treeEdge(this.CODEID, this.CODEParentID) ];
-      this.nodeType = (!this.CODEParentID)?'ROOT':'NODE';
-      this.canvasNode = canvasNode(locationObj);
-    }
+ function canvasObj (locationObj, renderInfoObj, canvas) {
 
-    getCodeID (){
-        return this.CODEID;
-    }
-
-    getCodeParentID (){
-        return this.CODEParentID;
-    }
-
-    getCodeVal (){
-        return this.CODEVal;
-    }
-
-    getCodeTxt (){
-        return this.CODETxt;
-    }
-
-    getCodeIcon (){
-        return this.CODEIcon;
-    }
-
-    renderNode(){}
-
-    displayValue(){}
-
-    
+    this.locationObj = locationObj;
+    this.renderInfoObj = renderInfoObj;
+    this.canvas = canvas;
 }
-module.exports = canvasObj;
+
+canvasObj.prototype.getlocationObj = function (){
+    return this.locationObj;
+}
+
+canvasObj.prototype.getrenderInfoObj = function (){
+        return this.renderInfoObj;
+}
+
+canvasObj.prototype.getCanvas = function (){
+        return this.canvas;
+}
+
+canvasObj.prototype.setlocationObj = function (locationobj){
+        this.locationObj = locationobj;
+}
+
+canvasObj.prototype.setrenderInfoObj = function (renderInfoObj){
+        this.renderInfoObj = renderInfoObj ;
+}
+
+canvasObj.prototype.setCanvas = function (canvas){
+    this.canvas = canvas;
+}
+
+canvasObj.prototype.coOnClick = function (){
+    return true;
+}
+
+canvasObj.prototype.coRender = function(){
+    return true;
+}
+    
+//module.exports = canvasObj;

@@ -1,48 +1,20 @@
-class canvasFactory {
-    /**
-     * 
-     * "CODEID":"8456",
-       "CODEParentID":null,
-       "CODEVal":"8456",
-       "CODETxt":"(Root)",
-       "CODEIcon":"folder"
-     */
-    constructor(nodeObj, locationObj){
-      
-      this.CODEID = nodeObj.CODEID;
-      this.CODEParentID = nodeObj.CODEParentID;
-      this.CODEVal = nodeObj.CODEVal;
-      this.CODETxt = nodeObj.CODETxt;
-      this.CODEIcon = nodeOBj.CODEIcon;
-      this.treeEdges = [new treeEdge(this.CODEID, this.CODEParentID) ];
-      this.nodeType = (!this.CODEParentID)?'ROOT':'NODE';
-      this.canvasNode = canvasNode(locationObj);
-    }
-
-    getCodeID (){
-        return this.CODEID;
-    }
-
-    getCodeParentID (){
-        return this.CODEParentID;
-    }
-
-    getCodeVal (){
-        return this.CODEVal;
-    }
-
-    getCodeTxt (){
-        return this.CODETxt;
-    }
-
-    getCodeIcon (){
-        return this.CODEIcon;
-    }
-
-    renderNode(){}
-
-    displayValue(){}
-
-    
+//const canvasNode = require('./canvasNode');
+function canvasFactory () {};
+canvasFactory.prototype.getCanvasObj= function (objType, locationObj, sizeObj, canvas){
+    if(objType == null){
+        return null;
+        }		
+        if(objType == "NODE"){
+        return new canvasNode(locationObj, sizeObj, canvas);
+        }
+/*
+    } else if(objType.equalsIgnoreCase("EDGE")){
+        return new canvasEdge();
+        
+        } else if(objType.equalsIgnoreCase("CANVAS")){
+        return new canvas();
+        }
+*/
 }
-module.exports = canvasFactory;
+  
+//module.exports = canvasFactory;
