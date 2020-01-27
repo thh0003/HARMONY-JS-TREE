@@ -9,7 +9,7 @@
 	<title>Tree</title>
 
 </head>
-<body>
+<body onload="startup(treeData, nodeSizeObj, canvasStyleObj)">
     <h1 class="title">HTML5 Tree (IE10+)</h1>
     <div id="treeBox">
         <canvas id="tree" width="400px" height="400px"></canvas>
@@ -17,21 +17,17 @@
     <script type="text/javascript" src="./canvasObj.js"></script>
     <script type="text/javascript" src="./canvasNode.js"></script>
     <script type="text/javascript" src="./canvasFactory.js"></script>
+    <script type="text/javascript" src="./treeNode.js"></script>
+    <script type="text/javascript" src="./tree.js"></script>
+    <script type="text/javascript" src="./treeBuilder.js"></script>
     <script>
-        var treeData = [  {
-    "CODEID":"8456",
-    "CODEParentID":null,
-    "CODEVal":"8456",
-    "CODETxt":"(Root)",
-    "CODEIcon":"folder"
-  },
-  {
-    "CODEID":"8457",
-    "CODEParentID":"8456",
-    "CODEVal":"8457",
-    "CODETxt":"2016",
-    "CODEIcon":"folder"
-  },
+
+var treeData = [  
+  {"CODEID":"8456","CODEParentID":null,"CODEVal":"8456","CODETxt":"(Root)","CODEIcon":"folder"},
+  {"CODEID":"8457","CODEParentID":"8456","CODEVal":"8457","CODETxt":"2016","CODEIcon":"folder"},
+  {"CODEID":"8475","CODEParentID":"8458","CODEVal":"8475","CODETxt":"John","CODEIcon":"folder"},
+  {"CODEID":"8458","CODEParentID":"8456","CODEVal":"8458","CODETxt":"Bobs File","CODEIcon":"folder"},
+  {"CODEID":"8465","CODEParentID":"8456","CODEVal":"8465","CODETxt":"2012","CODEIcon":"folder"},
   {"CODEID":"10231","CODEParentID":"20627","CODEVal":"10231","CODETxt":"07 July","CODEIcon":"folder"},
   {"CODEID":"20627","CODEParentID":"8456","CODEVal":"20627","CODETxt":"2017","CODEIcon":"folder"},
   {"CODEID":"21124","CODEParentID":"20627","CODEVal":"21124","CODETxt":"03 March","CODEIcon":"folder"},
@@ -46,44 +42,30 @@
         dx:0,
         dy:0
     }
-    var renderInfoObj = {
-        length: 32,
-        height: 16,
-        CODEIcon: "folder"
+
+    var nodeSizeObj = {
+        length: 16,
+        height: 16
     }
-    var canvas = document.getElementById("tree");
 
-    var canvasFac = new canvasFactory();
-    var node = canvasFac.getCanvasObj ('NODE', locationObj, renderInfoObj, canvas)
-    console.log(`Node Type: ${node.getCNodeType()} Node State: ${node.getCNodeState()}`);
-    node.setCNodeType('NODE');
-    node.coRender();
-    canvas.addEventListener('click', function(e) {
-        console.log(e);
-        node.toggleCNodeState();
-    });
+    var canvasStyleObj = {
+        fillStyle: "rgb(225, 225, 225)",
+        font: '12px serif',
+        fontPrimaryColor: "rgb(0, 0, 0)",
+        fontWarningColor: "rgb(255, 0, 0)",
+        leafStyle: "rgb(225, 225, 225)"
+    }
 
-    
-    
-    console.log(`Node Type: ${node.getCNodeType()} Node State: ${node.getCNodeState()}`);
-//    var harmonyTree = new tree(treeData, locationObj, canvas);
 
-    function onTreeLoad() {
+    function startup(treeData, nodeSizeObj, canvasStyleObj){
         var canvas = document.getElementById("tree");
-        console.log(document.getElementById("tree"));
-        var ctx = canvas.getContext("2d");
-        ctx.fillRect(0, 0, 150, 75);
-        ctx.moveTo(0, 0);
-        ctx.lineTo(200, 100);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(95, 50, 40, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.font = "30px Arial";
-        ctx.fillText("Hello World", 10, 50);
-        ctx.strokeText("Hello World", 10, 50);
-        var img = document.getElementById("folder");
-        ctx.drawImage(img, 100, 10);
+        if (canvas.getContext) {
+            var fileTree = new treeBuilder(treeData, nodeSizeObj, canvasStyleObj, canvas);
+            fileTree.buildTree();
+        } else {
+            console.error('This Browser does not support the Canvas Element');
+        }
+        
     }
     </script>
 </body>

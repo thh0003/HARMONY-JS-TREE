@@ -1,4 +1,8 @@
-//const canvasNode = require('./canvasNode');
+/**
+ * The Object Factory - Produces the desired canvas Object type, for future use as there is only one 
+ * object type currently
+ *       
+ */
 function canvasFactory () {};
 canvasFactory.prototype.getCanvasObj= function (objType, locationObj, sizeObj, canvas){
     if(objType == null){
@@ -7,14 +11,4 @@ canvasFactory.prototype.getCanvasObj= function (objType, locationObj, sizeObj, c
         if(objType == "NODE"){
         return new canvasNode(locationObj, sizeObj, canvas);
         }
-/*
-    } else if(objType.equalsIgnoreCase("EDGE")){
-        return new canvasEdge();
-        
-        } else if(objType.equalsIgnoreCase("CANVAS")){
-        return new canvas();
-        }
-*/
 }
-  
-//module.exports = canvasFactory;

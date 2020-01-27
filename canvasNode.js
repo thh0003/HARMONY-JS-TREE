@@ -1,64 +1,120 @@
-// const canvasObj = require("./canvasObj");
-
+/**
+ * The Object which displays the Node on the HTML Canvas.  It extends the canvasObj class with specific info for a Node
+ * 
+ * @param {Object} locationObj - Location information to display the canvasNode - please see canvasObj for details
+ * 
+ * @param {HTML Canvas} canvas - Canvas display HTML Element
+ * 
+ * @param {Object} renderInfoObj  - renderinformation - please see canvasObj for details
+ * @param {Image} mainImg - Image for the node
+ * @param {Image} stateImg - Image for the expansion or collapse, could have just drawn it
+ *       
+ */
 function canvasNode (locationObj, renderInfoObj, canvas){
           canvasObj.call(this, locationObj, renderInfoObj, canvas);
-          this.type = 'NODE';
-          this.nodeType = 'LEAF';
-          this.state = 'LEAF';
           this.imgInfo = {
               'LEAF': 'blank',
               'COLLAPSE': 'plus',
-              'EXPANDED': 'minus'
-          }
+              'EXPANDED': 'minus',
+              'HIDDEN': ''
+          };
           this.mainImg = new Image();
-          this.mainImg.src = `icon_${this.renderInfoObj.CODEIcon}.png`;
+          this.mainImg.src = 'icon_'+this.renderInfoObj.CODEIcon+'.png';
           this.stateImg = new Image();
-          this.stateImg.src = `icon_${this.imgInfo[this.state]}.png`;
-          
+          this.stateImg.src = 'icon_'+this.imgInfo['LEAF']+'.png';
 }
 
 canvasNode.prototype = Object.create(canvasObj.prototype);
 canvasNode.prototype.constructor = canvasNode;
 
-canvasObj.prototype.getCNodeType = function(){
-    return this.nodeType;
+
+canvasNode.prototype.setImg = function(state){
+    this.stateImg.src = 'icon_'+this.imgInfo[state]+'.png';
+}   
+
+
+/**
+ * clickExpand and clickValue - determine if the click was a hit on either and returns true or false
+ * 
+ * @param {Object} clickObj - X and Y coordinates of the click
+ */
+canvasNode.prototype.clickExpand = function (clickObj){
+    var clickX = clickObj.x;
+    var clickY = clickObj.y;
+    minX = this.locationObj.originx;
+    maxX = minX + this.renderInfoObj.length;
+    minY = this.locationObj.originy;
+    maxY = minY + this.renderInfoObj.height;
+
+    if (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY){
+        return (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY)?true:false;
+    }
+    
+}
+canvasNode.prototype.clickValue = function (clickObj){
+    var clickX = clickObj.x;
+    var clickY = clickObj.y;
+    minX = this.locationObj.originx+this.renderInfoObj.length;
+    maxX = minX + this.renderInfoObj.length;
+    minY = this.locationObj.originy+this.locationObj.dy;
+    maxY = minY + this.renderInfoObj.height;
+    if (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY){
+         return (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY)?true:false;
+    }
+    
 }
 
-canvasObj.prototype.setCNodeType = function(nodeType){
-    this.nodeType = nodeType;
-    this.state = (nodeType=='LEAF')?'LEAF':(nodeType=='ROOT' || nodeType=='NODE')?'COLLAPSE':'EXPANDED';
-    this.stateImg.src = `icon_${this.imgInfo[this.state]}.png`;
-    this.coRender();
-}
-
-canvasObj.prototype.getCNodeState = function(){
-    return this.state;
-}
-
-canvasObj.prototype.toggleCNodeState = function(){
-    this.state = (this.nodeType=='LEAF')?'LEAF':(this.state=='COLLAPSE')?'EXPANDED':'COLLAPSE';
-    this.stateImg.src = `icon_${this.imgInfo[this.state]}.png`;
-    this.coRender();
-}
-
-canvasObj.prototype.coRender = function(){
-    console.log(`Node Info:`);
-    console.log(this);
+/**
+ * render - renders the canvasNode on the canvas
+ * 
+ * @param {treeNode} curNode - treeNode of the canvasNode
+ * @param {Object} locObj - contains the x and y coordinates of the node
+ */
+canvasNode.prototype.render = function(curNode, locObj){
     var ctx = this.canvas.getContext("2d");
+    ctx.font = '12px serif';
     var that = this;
-    ctx.fillStyle = "rgb(255, 255, 255)";
-    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    var disX = locObj.x * this.renderInfoObj.length;
+    var disY = locObj.y * this.renderInfoObj.height;
+    this.locationObj.originx = disX;
+    this.locationObj.originy = disY;
 
     this.mainImg.onload = function() {
-        ctx.drawImage(that.mainImg, that.locationObj.originx+that.locationObj.dx+16, that.locationObj.originy+that.locationObj.dy);
-        ctx.drawImage(that.stateImg, that.locationObj.originx+that.locationObj.dx, that.locationObj.originy+that.locationObj.dy);
+        ctx.fillStyle = that.renderInfoObj.fillStyle;
+        ctx.drawImage(that.mainImg, disX+that.renderInfoObj.length, disY);
+        if (curNode.nodeDisplayInfo.state=='LEAF'){
+            ctx.fillStyle = that.renderInfoObj.leafStyle;
+            ctx.fillRect(disX,disY,that.renderInfoObj.length,that.renderInfoObj.height);
+        } else {
+            ctx.drawImage(that.stateImg, disX, disY);
+        }
     };
 
     this.stateImg.onload = function() {
-        ctx.drawImage(that.stateImg, that.locationObj.originx+that.locationObj.dx, that.locationObj.originy+that.locationObj.dy);
-        ctx.drawImage(that.mainImg, that.locationObj.originx+that.locationObj.dx+16, that.locationObj.originy+that.locationObj.dy);
+        ctx.fillStyle = that.renderInfoObj.fillStyle;
+
+        if (curNode.nodeDisplayInfo.state=='LEAF'){
+            ctx.fillStyle = that.renderInfoObj.leafStyle;
+            ctx.fillRect(disX,disY,that.renderInfoObj.length,that.renderInfoObj.height);
+        } else {
+            ctx.drawImage(that.stateImg, disX, disY);
+        }
+        
+        ctx.drawImage(that.mainImg, disX+that.renderInfoObj.length, disY);
     };
+
+    ctx.fillStyle = that.renderInfoObj.fillStyle;
+    ctx.drawImage(that.mainImg, disX+that.renderInfoObj.length, disY);
+    if (curNode.nodeDisplayInfo.state=='LEAF'){
+        ctx.fillStyle = that.renderInfoObj.leafStyle;
+        ctx.fillRect(disX,disY,that.renderInfoObj.length,that.renderInfoObj.height);
+    } else {
+        ctx.drawImage(that.stateImg, disX, disY);
+    }
+    ctx.fillStyle = that.renderInfoObj.fontPrimaryColor;
+    ctx.fillText(that.renderInfoObj.CODETxt,disX+that.renderInfoObj.length*2, disY+that.renderInfoObj.height*3/4);
+    if (curNode.nodeDisplayInfo.valState=='EXPOSED'){
+        ctx.fillStyle = that.renderInfoObj.fontWarningColor;;
+        ctx.fillText(' Value: '+that.renderInfoObj.CODEVal,disX+that.renderInfoObj.length*2+that.renderInfoObj.CODETxtMeasure, disY+that.renderInfoObj.height*3/4);
+    } 
 }
-
-
-//module.exports = canvasNode;
