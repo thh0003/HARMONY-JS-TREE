@@ -39,29 +39,36 @@ canvasNode.prototype.setImg = function(state){
  * @param {Object} clickObj - X and Y coordinates of the click
  */
 canvasNode.prototype.clickExpand = function (clickObj){
-    var clickX = clickObj.x;
-    var clickY = clickObj.y;
-    minX = this.locationObj.originx;
-    maxX = minX + this.renderInfoObj.length;
-    minY = this.locationObj.originy;
-    maxY = minY + this.renderInfoObj.height;
+    try{
+        var clickX = clickObj.x;
+        var clickY = clickObj.y;
+        minX = this.locationObj.originx;
+        maxX = minX + this.renderInfoObj.length;
+        minY = this.locationObj.originy;
+        maxY = minY + this.renderInfoObj.height;
 
-    if (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY){
-        return (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY)?true:false;
+        if (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY){
+            return (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY)?true:false;
+        }
+    } catch (err){
+        console.error('canvasNode-clickExpand '+err.message+': '+err.stack);
     }
-    
 }
+
 canvasNode.prototype.clickValue = function (clickObj){
-    var clickX = clickObj.x;
-    var clickY = clickObj.y;
-    minX = this.locationObj.originx+this.renderInfoObj.length;
-    maxX = minX + this.renderInfoObj.length;
-    minY = this.locationObj.originy+this.locationObj.dy;
-    maxY = minY + this.renderInfoObj.height;
-    if (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY){
-         return (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY)?true:false;
+    try {
+        var clickX = clickObj.x;
+        var clickY = clickObj.y;
+        minX = this.locationObj.originx+this.renderInfoObj.length;
+        maxX = minX + this.renderInfoObj.length;
+        minY = this.locationObj.originy+this.locationObj.dy;
+        maxY = minY + this.renderInfoObj.height;
+        if (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY){
+            return (clickX <= maxX && clickX >= minX && clickY <= maxY && clickY >= minY)?true:false;
+        }
+    } catch (err){
+        console.error('canvasNode-clickValue '+err.message+': '+err.stack);
     }
-    
 }
 
 /**
@@ -71,15 +78,39 @@ canvasNode.prototype.clickValue = function (clickObj){
  * @param {Object} locObj - contains the x and y coordinates of the node
  */
 canvasNode.prototype.render = function(curNode, locObj){
-    var ctx = this.canvas.getContext("2d");
-    ctx.font = '12px serif';
-    var that = this;
-    var disX = locObj.x * this.renderInfoObj.length;
-    var disY = locObj.y * this.renderInfoObj.height;
-    this.locationObj.originx = disX;
-    this.locationObj.originy = disY;
+    try{
+        var ctx = this.canvas.getContext("2d");
+        ctx.font = '12px serif';
+        var that = this;
+        var disX = locObj.x * this.renderInfoObj.length;
+        var disY = locObj.y * this.renderInfoObj.height;
+        this.locationObj.originx = disX;
+        this.locationObj.originy = disY;
 
-    this.mainImg.onload = function() {
+        this.mainImg.onload = function() {
+            ctx.fillStyle = that.renderInfoObj.fillStyle;
+            ctx.drawImage(that.mainImg, disX+that.renderInfoObj.length, disY);
+            if (curNode.nodeDisplayInfo.state=='LEAF'){
+                ctx.fillStyle = that.renderInfoObj.leafStyle;
+                ctx.fillRect(disX,disY,that.renderInfoObj.length,that.renderInfoObj.height);
+            } else {
+                ctx.drawImage(that.stateImg, disX, disY);
+            }
+        };
+
+        this.stateImg.onload = function() {
+            ctx.fillStyle = that.renderInfoObj.fillStyle;
+
+            if (curNode.nodeDisplayInfo.state=='LEAF'){
+                ctx.fillStyle = that.renderInfoObj.leafStyle;
+                ctx.fillRect(disX,disY,that.renderInfoObj.length,that.renderInfoObj.height);
+            } else {
+                ctx.drawImage(that.stateImg, disX, disY);
+            }
+            
+            ctx.drawImage(that.mainImg, disX+that.renderInfoObj.length, disY);
+        };
+
         ctx.fillStyle = that.renderInfoObj.fillStyle;
         ctx.drawImage(that.mainImg, disX+that.renderInfoObj.length, disY);
         if (curNode.nodeDisplayInfo.state=='LEAF'){
@@ -88,33 +119,13 @@ canvasNode.prototype.render = function(curNode, locObj){
         } else {
             ctx.drawImage(that.stateImg, disX, disY);
         }
-    };
-
-    this.stateImg.onload = function() {
-        ctx.fillStyle = that.renderInfoObj.fillStyle;
-
-        if (curNode.nodeDisplayInfo.state=='LEAF'){
-            ctx.fillStyle = that.renderInfoObj.leafStyle;
-            ctx.fillRect(disX,disY,that.renderInfoObj.length,that.renderInfoObj.height);
-        } else {
-            ctx.drawImage(that.stateImg, disX, disY);
-        }
-        
-        ctx.drawImage(that.mainImg, disX+that.renderInfoObj.length, disY);
-    };
-
-    ctx.fillStyle = that.renderInfoObj.fillStyle;
-    ctx.drawImage(that.mainImg, disX+that.renderInfoObj.length, disY);
-    if (curNode.nodeDisplayInfo.state=='LEAF'){
-        ctx.fillStyle = that.renderInfoObj.leafStyle;
-        ctx.fillRect(disX,disY,that.renderInfoObj.length,that.renderInfoObj.height);
-    } else {
-        ctx.drawImage(that.stateImg, disX, disY);
+        ctx.fillStyle = that.renderInfoObj.fontPrimaryColor;
+        ctx.fillText(that.renderInfoObj.CODETxt,disX+that.renderInfoObj.length*2, disY+that.renderInfoObj.height*3/4);
+        if (curNode.nodeDisplayInfo.valState=='EXPOSED'){
+            ctx.fillStyle = that.renderInfoObj.fontWarningColor;;
+            ctx.fillText(' Value: '+that.renderInfoObj.CODEVal,disX+that.renderInfoObj.length*2+that.renderInfoObj.CODETxtMeasure, disY+that.renderInfoObj.height*3/4);
+        } 
+    } catch (err){
+        console.error('canvasNode-render '+err.message+': '+err.stack);
     }
-    ctx.fillStyle = that.renderInfoObj.fontPrimaryColor;
-    ctx.fillText(that.renderInfoObj.CODETxt,disX+that.renderInfoObj.length*2, disY+that.renderInfoObj.height*3/4);
-    if (curNode.nodeDisplayInfo.valState=='EXPOSED'){
-        ctx.fillStyle = that.renderInfoObj.fontWarningColor;;
-        ctx.fillText(' Value: '+that.renderInfoObj.CODEVal,disX+that.renderInfoObj.length*2+that.renderInfoObj.CODETxtMeasure, disY+that.renderInfoObj.height*3/4);
-    } 
 }

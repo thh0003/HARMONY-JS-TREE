@@ -36,21 +36,24 @@ treeBuilder.prototype.setcanvas = function (canvas){
  * 4) Listens for any mouse click events on the canvas
  */
 treeBuilder.prototype.buildTree = function (){
-    this.tree = new tree(this.treeData, this.canvas, this.nodeSizeObj, this.canvasStyleObj);
-    var ctx = this.canvas.getContext("2d");
-    ctx.fillStyle = canvasStyleObj.fillStyle;
-    ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    that=this;
+    try{
+        this.tree = new tree(this.treeData, this.canvas, this.nodeSizeObj, this.canvasStyleObj);
+        var ctx = this.canvas.getContext("2d");
+        ctx.fillStyle = canvasStyleObj.fillStyle;
+        ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        that=this;
 
-    this.tree.generateLogicTree(function () {
-        that.tree.renderTree();
-    });
-
-    this.canvas.addEventListener('click', function(e) {
-        that.tree.clickHandler(e, function(go){
+        this.tree.generateLogicTree(function () {
             that.tree.renderTree();
-
         });
-    });
 
+        this.canvas.addEventListener('click', function(e) {
+            that.tree.clickHandler(e, function(go){
+                that.tree.renderTree();
+
+            });
+        });
+    } catch (err){
+        console.error('treeBuilder-buildTree '+err.message+': '+err.stack);
+    }
 }

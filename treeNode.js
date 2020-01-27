@@ -36,9 +36,13 @@ function treeNode (treeNodeObj, canvasNode, nodeFamilyInfo, nodeDisplayInfo){
  * @param {treeNode} childTreeNode - a treeNode object
  */
 treeNode.prototype.addChildNode = function (childTreeNode){
-    this.nodeFamilyInfo.childNodes.push(childTreeNode);
-    this.nodeFamilyInfo.childCount = this.nodeFamilyInfo.childCount + 1;
-    this.setNodeType('NODE');
+    try{
+        this.nodeFamilyInfo.childNodes.push(childTreeNode);
+        this.nodeFamilyInfo.childCount = this.nodeFamilyInfo.childCount + 1;
+        this.setNodeType('NODE');
+    } catch (err){
+        console.error('treeNode-addChildNode '+err.message+': '+err.stack);
+    }
 }
 
 treeNode.prototype.getNodeType = function(){
@@ -46,16 +50,24 @@ treeNode.prototype.getNodeType = function(){
 }
 
 treeNode.prototype.setNodeType = function(nodeType){
-    var canvasNode = this.getcanvasNode();
-    this.nodeType = nodeType;
-    this.nodeDisplayInfo.state = (nodeType=='LEAF')?'LEAF':(nodeType=='ROOT' || nodeType=='NODE')?'EXPANDED':'COLLAPSE';
-    canvasNode.setImg(this.nodeDisplayInfo.state);
+    try{
+        var canvasNode = this.getcanvasNode();
+        this.nodeType = nodeType;
+        this.nodeDisplayInfo.state = (nodeType=='LEAF')?'LEAF':(nodeType=='ROOT' || nodeType=='NODE')?'EXPANDED':'COLLAPSE';
+        canvasNode.setImg(this.nodeDisplayInfo.state);
+    } catch (err){
+        console.error('treeNode-sedNodeType '+err.message+': '+err.stack);
+    }
 }
 
 treeNode.prototype.setNodeState = function(state){
-    var canvasNode = this.getcanvasNode();
-    this.nodeDisplayInfo.state = state;
-    canvasNode.setImg(this.nodeDisplayInfo.state);
+    try{
+        var canvasNode = this.getcanvasNode();
+        this.nodeDisplayInfo.state = state;
+        canvasNode.setImg(this.nodeDisplayInfo.state);
+    } catch (err){
+        console.error('treeNode-setNodeState '+err.message+': '+err.stack);
+    }
 }
 
 treeNode.prototype.getNodeState = function(){
@@ -89,31 +101,34 @@ treeNode.prototype.setNodeDisplayInfo = function(nodeDisplayInfo){
  * @param {Object} curLocObj - the current X,Y coordinates on the HTML canvas
  */
 treeNode.prototype.render = function (curNode, curLocObj){
+    try{
+        var nextLocObj = {x:curLocObj.x,y:curLocObj.y};
+        curNode.canvasNode.render(curNode, curLocObj);
 
-    var nextLocObj = {x:curLocObj.x,y:curLocObj.y};
-    curNode.canvasNode.render(curNode, curLocObj);
+        if (curNode.nodeFamilyInfo.childNodes.length > 0){
+            if (curNode.nodeDisplayInfo.state=='COLLAPSE'){
+                return {x:nextLocObj.x,y:nextLocObj.y};
+            } else {
+                nextLocObj.x = nextLocObj.x+1;
+                for(let x=0;x<this.nodeFamilyInfo.childNodes.length;x++){
+                    if (x+1 == this.nodeFamilyInfo.childNodes.length){
+                        nextLocObj.y = nextLocObj.y+1;
 
-    if (curNode.nodeFamilyInfo.childNodes.length > 0){
-        if (curNode.nodeDisplayInfo.state=='COLLAPSE'){
-            return {x:nextLocObj.x,y:nextLocObj.y};
-        } else {
-            nextLocObj.x = nextLocObj.x+1;
-            for(let x=0;x<this.nodeFamilyInfo.childNodes.length;x++){
-                if (x+1 == this.nodeFamilyInfo.childNodes.length){
-                    nextLocObj.y = nextLocObj.y+1;
+                        var retObj = this.nodeFamilyInfo.childNodes[x].render(this.nodeFamilyInfo.childNodes[x], nextLocObj);
+                        return {x:nextLocObj.x,y:nextLocObj.y};
+                    } else {
+                        nextLocObj.y = nextLocObj.y+1;
 
-                    var retObj = this.nodeFamilyInfo.childNodes[x].render(this.nodeFamilyInfo.childNodes[x], nextLocObj);
-                    return {x:nextLocObj.x,y:nextLocObj.y};
-                } else {
-                    nextLocObj.y = nextLocObj.y+1;
-
-                    var retObj = this.nodeFamilyInfo.childNodes[x].render(this.nodeFamilyInfo.childNodes[x], nextLocObj);
-                    nextLocObj.y = retObj.y;
+                        var retObj = this.nodeFamilyInfo.childNodes[x].render(this.nodeFamilyInfo.childNodes[x], nextLocObj);
+                        nextLocObj.y = retObj.y;
+                    }
                 }
             }
+        } else {
+            return {x:nextLocObj.x,y:nextLocObj.y};
         }
-    } else {
-        return {x:nextLocObj.x,y:nextLocObj.y};
+    } catch (err){
+        console.error('treeNode-render '+err.message+': '+err.stack);
     }
 
 }
