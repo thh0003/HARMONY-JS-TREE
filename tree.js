@@ -37,14 +37,7 @@ tree.prototype.clickHandler = function (e, callback){
         var clickObj = {x: e.offsetX, y: e.offsetY};
         var retValue = false;
         var that = this;
-        this.allNodes.forEach(function(tn){
-            var cHitObj = tn.clickHit(clickObj);
-            if (cHitObj.EXPAND) 
-                return retValue = true;
-            else if (cHitObj.VALUE) 
-                return retValue = true;
-        });
-        
+        this.treeRoot.clickHitRec(this.treeRoot, clickObj);
         if (callback && typeof(callback) === 'function') {
 
             var boundCallBack = callback.bind(this);
@@ -63,10 +56,14 @@ tree.prototype.clickHandler = function (e, callback){
 
 tree.prototype.findNode = function (nodeID){
     try{
-        var parentNode = this.allNodes.filter(function(node){
-            return node.CODEID == nodeID;
-        });
-        return (parentNode.length > 0)? parentNode[parentNode.length-1] : false;
+        if (nodeID==null){
+            return this.treeRoot; 
+        }else {
+            var parentNode = this.allNodes.filter(function(node){
+                return node.CODEID == nodeID;
+            });
+            return (parentNode.length > 0)? parentNode[parentNode.length-1] : false;
+        }
     } catch (err){
         console.error('tree-findNode '+err.message+': '+err.stack);
     }
@@ -177,6 +174,7 @@ tree.prototype.generateLogicTree = function(callback){
 
             curNodeData = treeNodeData.shift();
             var parentNode = (curNodeData.CODEParentID==null)?null:this.findNode(curNodeData.CODEParentID);
+            curNodeData.CODEParentNode = parentNode;
 
             if (!parentNode && curNodeData.CODEParentID != null){
                 treeNodeData.push(curNodeData);  //this nodes parent is not created yet or it is an orphan or another tree
@@ -197,7 +195,6 @@ tree.prototype.generateLogicTree = function(callback){
     } catch (err){
         console.error('tree-generateLogicTree '+err.message+': '+err.stack);
     }
-
 }
 
 /**

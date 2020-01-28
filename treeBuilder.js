@@ -48,7 +48,7 @@ treeBuilder.prototype.buildTree = function (){
         });
 
         this.canvas.addEventListener('click', function(e) {
-            that.tree.clickHandler(e, function(go){
+            that.tree.clickHandler(e, function(){
                 that.tree.renderTree();
 
             });

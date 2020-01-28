@@ -3,9 +3,11 @@
  * @param {Object} treeNodeObj - Data for the node from one record of the imported data
  *     -@param {String} CODEID - Identifier for the Node
  *     -@param {String} CODEParentID - Identifier of the Parent Node null if the node is a Root
+ *     -@param {treeNode} CODEParentNode - Identifier of the Parent Node null if the node is a Root
  *     -@param {String} CODEVal - Value of the node
  *     -@param {String} CODETxt - Name of the node
  *     -@param {String} CODEIcon - Display Icon for the node
+ * curNodeData.CODEParentNode
  * 
  * @param {canvasNode} canvasNode - Canvas display HTML Element
  * 
@@ -23,6 +25,7 @@ function treeNode (treeNodeObj, canvasNode, nodeFamilyInfo, nodeDisplayInfo){
     this.canvasNode = canvasNode;
     this.CODEID = treeNodeObj.CODEID;
     this.CODEParentID = treeNodeObj.CODEParentID;
+    this.CODEParentNode = treeNodeObj.CODEParentNode;
     this.CODEVal = treeNodeObj.CODEVal;
     this.CODETxt = treeNodeObj.CODETxt;
     this.nodeFamilyInfo = nodeFamilyInfo;
@@ -142,28 +145,56 @@ treeNode.prototype.render = function (curNode, curLocObj){
 
  */
 treeNode.prototype.clickHit = function (clickObj){
-    var canvasHit = {EXPAND: false, VALUE:false};
-    canvasHit.EXPAND = this.canvasNode.clickExpand(clickObj);
-    if (canvasHit.EXPAND){
-        var curState = this.nodeDisplayInfo.state;
-        if (curState=='EXPANDED'){
-            this.nodeDisplayInfo.state = 'COLLAPSE';
-            this.getcanvasNode().setImg('COLLAPSE');
-        } else if (curState=='COLLAPSE') {
-            this.nodeDisplayInfo.state = 'EXPANDED';
-            this.getcanvasNode().setImg('EXPANDED');
+    try{
+        var canvasHit = {EXPAND: false, VALUE:false};
+        canvasHit.EXPAND = this.canvasNode.clickExpand(clickObj);
+        if (canvasHit.EXPAND){
+            var curState = this.nodeDisplayInfo.state;
+            if (curState=='EXPANDED'){
+                this.nodeDisplayInfo.state = 'COLLAPSE';
+                this.getcanvasNode().setImg('COLLAPSE');
+            } else if (curState=='COLLAPSE') {
+                this.nodeDisplayInfo.state = 'EXPANDED';
+                this.getcanvasNode().setImg('EXPANDED');
+            }
         }
-    }
-    canvasHit.VALUE = this.canvasNode.clickValue(clickObj);
-    if (canvasHit.VALUE){
-        var curValue = this.nodeDisplayInfo.valState;
-        if (curValue=='COVERED')
-            this.nodeDisplayInfo.valState = 'EXPOSED';
-        else
-            this.nodeDisplayInfo.valState = 'COVERED';
-    }
-    return canvasHit;
+        canvasHit.VALUE = this.canvasNode.clickValue(clickObj);
+        if (canvasHit.VALUE){
+            var curValue = this.nodeDisplayInfo.valState;
+            if (curValue=='COVERED')
+                this.nodeDisplayInfo.valState = 'EXPOSED';
+            else
+                this.nodeDisplayInfo.valState = 'COVERED';
+        }
+        return canvasHit;
+    } catch (err){
+        console.error('treeNode-clickHit '+err.message+': '+err.stack);
+    }        
     
+}
+
+treeNode.prototype.clickHitRec = function (curNode, clickObj){
+    try{
+        curNode.clickHit(clickObj);
+        if (curNode.nodeFamilyInfo.childNodes.length > 0){
+            if (curNode.nodeDisplayInfo.state=='COLLAPSE'){
+                return;
+            } else {
+                for(let x=0;x<this.nodeFamilyInfo.childNodes.length;x++){
+                    if (x+1 == this.nodeFamilyInfo.childNodes.length){
+                        this.nodeFamilyInfo.childNodes[x].clickHitRec(this.nodeFamilyInfo.childNodes[x], clickObj);
+                        return;
+                    } else {
+                        this.nodeFamilyInfo.childNodes[x].clickHitRec(this.nodeFamilyInfo.childNodes[x], clickObj);
+                    }
+                }
+            }
+        } else {
+            return;
+        }
+    } catch (err){
+        console.error('treeNode-clickHitRec '+err.message+': '+err.stack);
+    }        
 }
 
 treeNode.prototype.getcanvasNode = function (){
