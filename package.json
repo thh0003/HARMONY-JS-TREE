@@ -1,0 +1,27 @@
+{
+  "name": "harmony-js-tree",
+  "version": "1.0.0",
+  "description": "This is a Javascript Tree library which works in ES5 or back to Internet Explorer 10",
+  "main": "index.html",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thh0003/HARMONY-JS-TREE.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thh0003/HARMONY-JS-TREE/issues"
+  },
+  "homepage": "https://github.com/thh0003/HARMONY-JS-TREE#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "chai": "4.2.0",
+    "mocha": "7.0.1"
+  }
+}

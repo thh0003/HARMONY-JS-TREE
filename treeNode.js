@@ -115,10 +115,9 @@ treeNode.prototype.render = function (curNode, curLocObj){
                         nextLocObj.y = nextLocObj.y+1;
 
                         var retObj = this.nodeFamilyInfo.childNodes[x].render(this.nodeFamilyInfo.childNodes[x], nextLocObj);
-                        return {x:nextLocObj.x,y:nextLocObj.y};
+                        return {x:nextLocObj.x,y:retObj.y};
                     } else {
                         nextLocObj.y = nextLocObj.y+1;
-
                         var retObj = this.nodeFamilyInfo.childNodes[x].render(this.nodeFamilyInfo.childNodes[x], nextLocObj);
                         nextLocObj.y = retObj.y;
                     }

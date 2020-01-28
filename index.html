@@ -9,7 +9,7 @@
 	<title>Tree</title>
 
 </head>
-<body onload="startup(treeData, nodeSizeObj, canvasStyleObj)">
+<body onload="startup(treeData2, nodeSizeObj, canvasStyleObj)">
     <h1 class="title">HTML5 Tree (IE10+)</h1>
     <div id="treeBox">
         <canvas id="tree" width="400px" height="400px"></canvas>
@@ -21,8 +21,17 @@
     <script type="text/javascript" src="./tree.js"></script>
     <script type="text/javascript" src="./treeBuilder.js"></script>
     <script>
-
-var treeData = [  
+var treeData = [
+    {"CODEID":"8456","CODEParentID":null,"CODEVal":"8456","CODETxt":"(Root)","CODEIcon":"folder"},
+    {"CODEID":"8457","CODEParentID":"8456","CODEVal":"8457","CODETxt":"2016","CODEIcon":"folder"},
+    {"CODEID":"10231","CODEParentID":"20627","CODEVal":"10231","CODETxt":"07 July","CODEIcon":"folder"},
+    {"CODEID":"20627","CODEParentID":"8456","CODEVal":"20627","CODETxt":"2017","CODEIcon":"folder"},
+    {"CODEID":"21124","CODEParentID":"20627","CODEVal":"21124","CODETxt":"03 March","CODEIcon":"folder"},
+    {"CODEID":"21168","CODEParentID":"20627","CODEVal":"21168","CODETxt":"04 April","CODEIcon":"folder"},
+    {"CODEID":"21527","CODEParentID":"20627","CODEVal":"21527","CODETxt":"06 June","CODEIcon":"folder"},
+    {"CODEID":"22304","CODEParentID":"20627","CODEVal":"22304","CODETxt":"10 October","CODEIcon":"folder"}
+    ];
+var treeData2 = [  
   {"CODEID":"8456","CODEParentID":null,"CODEVal":"8456","CODETxt":"(Root)","CODEIcon":"folder"},
   {"CODEID":"8457","CODEParentID":"8456","CODEVal":"8457","CODETxt":"2016","CODEIcon":"folder"},
   {"CODEID":"8475","CODEParentID":"8458","CODEVal":"8475","CODETxt":"John","CODEIcon":"folder"},
@@ -32,8 +41,14 @@ var treeData = [
   {"CODEID":"20627","CODEParentID":"8456","CODEVal":"20627","CODETxt":"2017","CODEIcon":"folder"},
   {"CODEID":"21124","CODEParentID":"20627","CODEVal":"21124","CODETxt":"03 March","CODEIcon":"folder"},
   {"CODEID":"21168","CODEParentID":"20627","CODEVal":"21168","CODETxt":"04 April","CODEIcon":"folder"},
-  {"CODEID":"21527","CODEParentID":"20627","CODEVal":"21527","CODETxt":"06 June","CODEIcon":"folder"},
-  {"CODEID":"22304","CODEParentID":"20627","CODEVal":"22304","CODETxt":"10 October","CODEIcon":"folder"}
+  {"CODEID":"21527","CODEParentID":'846435',"CODEVal":"21527","CODETxt":"06 June","CODEIcon":"folder"},
+  {"CODEID":"22304","CODEParentID":"20627","CODEVal":"22304","CODETxt":"10 October","CODEIcon":"folder"},
+  {"CODEID":"823458","CODEParentID":"8456","CODEVal":"8458","CODETxt":"Bobs File","CODEIcon":"folder"},
+  {"CODEID":"846435","CODEParentID":"21124","CODEVal":"8465","CODETxt":"2012","CODEIcon":"folder"},
+  {"CODEID":"102332","CODEParentID":"20627","CODEVal":{x:"10231",y:'tom',z:3234},"CODETxt":"07 July","CODEIcon":"folder"},
+  {"CODEID":"206237","CODEParentID":"8456","CODEVal":"20627","CODETxt":"2017","CODEIcon":"folder"},
+  {"CODEID":"2122124","CODEParentID":"20627","CODEVal":"21124","CODETxt":"03 March","CODEIcon":"folder"},
+ 
 ]
 
     var locationObj = {
@@ -57,10 +72,10 @@ var treeData = [
     }
 
 
-    function startup(treeData, nodeSizeObj, canvasStyleObj){
+    function startup(treeData2, nodeSizeObj, canvasStyleObj){
         var canvas = document.getElementById("tree");
         if (canvas.getContext) {
-            var fileTree = new treeBuilder(treeData, nodeSizeObj, canvasStyleObj, canvas);
+            var fileTree = new treeBuilder(treeData2, nodeSizeObj, canvasStyleObj, canvas);
             fileTree.buildTree();
         } else {
             console.error('This Browser does not support the Canvas Element');

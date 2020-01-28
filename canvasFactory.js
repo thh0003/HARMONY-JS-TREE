@@ -5,10 +5,17 @@
  */
 function canvasFactory () {};
 canvasFactory.prototype.getCanvasObj= function (objType, locationObj, sizeObj, canvas){
-    if(objType == null){
-        return null;
+    try{
+        if(objType == null || typeof objType ==='undefined'){
+            throw (new Error('Canvas Object type is required'));
         }		
         if(objType == "NODE"){
-        return new canvasNode(locationObj, sizeObj, canvas);
-        }
+            return new canvasNode(locationObj, sizeObj, canvas);
+        } else 
+            throw (new Error('Canvas Object does not exist'));
+    } catch (err){
+        console.error('canvasFactory-constructor '+err.message+': '+err.stack);
+        throw (err);
+    }
+    
 }

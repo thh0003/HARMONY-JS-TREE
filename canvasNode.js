@@ -11,17 +11,27 @@
  *       
  */
 function canvasNode (locationObj, renderInfoObj, canvas){
-          canvasObj.call(this, locationObj, renderInfoObj, canvas);
-          this.imgInfo = {
-              'LEAF': 'blank',
-              'COLLAPSE': 'plus',
-              'EXPANDED': 'minus',
-              'HIDDEN': ''
-          };
-          this.mainImg = new Image();
-          this.mainImg.src = 'icon_'+this.renderInfoObj.CODEIcon+'.png';
-          this.stateImg = new Image();
-          this.stateImg.src = 'icon_'+this.imgInfo['LEAF']+'.png';
+    try{
+
+        if (typeof locationObj === 'undefined' || typeof renderInfoObj === 'undefined' || typeof canvas === 'undefined'){
+            throw new Error('All arguments are required');
+        } else {
+            canvasObj.call(this, locationObj, renderInfoObj, canvas);
+            this.imgInfo = {
+                'LEAF': 'blank',
+                'COLLAPSE': 'plus',
+                'EXPANDED': 'minus',
+                'HIDDEN': ''
+            };
+            this.mainImg = new Image();
+            this.mainImg.src = 'icon_'+this.renderInfoObj.CODEIcon+'.png';
+            this.stateImg = new Image();
+            this.stateImg.src = 'icon_'+this.imgInfo['LEAF']+'.png';
+        }
+    } catch (err){
+        console.error('canvasNode-constructor '+err.message+': '+err.stack);
+        throw (err);
+    }
 }
 
 canvasNode.prototype = Object.create(canvasObj.prototype);
@@ -52,6 +62,7 @@ canvasNode.prototype.clickExpand = function (clickObj){
         }
     } catch (err){
         console.error('canvasNode-clickExpand '+err.message+': '+err.stack);
+        throw (err);
     }
 }
 
@@ -68,6 +79,7 @@ canvasNode.prototype.clickValue = function (clickObj){
         }
     } catch (err){
         console.error('canvasNode-clickValue '+err.message+': '+err.stack);
+        throw (err);
     }
 }
 
